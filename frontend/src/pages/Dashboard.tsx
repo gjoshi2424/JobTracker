@@ -4,7 +4,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { getApplications, deleteApplication } from '../services/api';
 import { type Application, ApplicationStatus } from '../types';
 import { StatusBadge, LoadingSpinner } from '../components';
-
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -44,6 +44,11 @@ export default function Dashboard() {
     return acc;
   }, {} as Record<ApplicationStatus, number>);
 
+  const chartData = Object.entries(stats).map(([status, count]) => ({
+    name: status.replace('_', ' '),
+    count
+  }));
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -58,6 +63,23 @@ export default function Dashboard() {
             <span className="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1">{status.replace('_', ' ')}</span>
           </div>
         ))}
+      </div>
+
+      {/* Chart Section */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Application Status Overview</h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+            <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+            <Tooltip
+              cursor={{ fill: '#f1f5f9' }}
+              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            />
+            <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={50} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Header and Actions */}
