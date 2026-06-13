@@ -15,6 +15,7 @@ export default function ApplicationDetails() {
   // Edit states
   const [status, setStatus] = useState<ApplicationStatus>(ApplicationStatus.APPLIED);
   const [notes, setNotes] = useState('');
+  const [interviewDate, setInterviewDate] = useState('');
 
   useEffect(() => {
     if (id) fetchApplication(id);
@@ -26,6 +27,14 @@ export default function ApplicationDetails() {
       setApplication(data);
       setStatus(data.status);
       setNotes(data.notes || '');
+      if (data.interviewDate) {
+        // Format to YYYY-MM-DDTHH:mm for datetime-local input
+        const dateObj = new Date(data.interviewDate);
+        const formattedDate = new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        setInterviewDate(formattedDate);
+      } else {
+        setInterviewDate('');
+      }
     } catch (error) {
       console.error('Failed to fetch application', error);
     } finally {
@@ -37,7 +46,19 @@ export default function ApplicationDetails() {
     if (!id) return;
     setSaving(true);
     try {
-      const updated = await updateApplication(id, { status, notes });
+      const payload: any = { status, notes };
+      if (status === ApplicationStatus.INTERVIEW) {
+        if (!interviewDate) {
+          alert('Interview Date is required');
+          setSaving(false);
+          return;
+        }
+        payload.interviewDate = new Date(interviewDate).toISOString();
+      } else {
+        payload.interviewDate = null;
+      }
+      
+      const updated = await updateApplication(id, payload);
       setApplication(updated);
       navigate('/');
     } catch (error) {
@@ -115,6 +136,19 @@ export default function ApplicationDetails() {
                 ))}
               </select>
             </div>
+            
+            {status === ApplicationStatus.INTERVIEW && (
+              <div>
+                <label className="block text-sm font-medium text-slate-500 mb-1">Interview Date *</label>
+                <input
+                  type="datetime-local"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
+                  required
+                />
+              </div>
+            )}
           </div>
 
           <div className="border-t border-slate-100 pt-6">

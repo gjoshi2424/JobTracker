@@ -2,6 +2,8 @@
 
 A full-stack application for tracking job applications built with React, Vite, Tailwind CSS v4, Node.js, Express, TypeScript, and PostgreSQL.
 
+Note: Main purpose of this app is to test webhook integration with zapier.
+
 ## Prerequisites
 
 - Node.js (v18+)
@@ -47,3 +49,5 @@ The frontend will be available at `http://localhost:5173`.
 - **Add Application**: Add a new job application with company and role.
 - **Application Details**: View specific application details, edit the current status, and add notes.
 - **Delete**: Remove an application completely.
+- **Email Notifications**: Get notified when your application status changes via Zapier.
+- **Calendar Integration**: Set a date for the interview and add notes for the interview via Zapier.

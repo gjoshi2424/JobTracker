@@ -13,11 +13,11 @@ export const getApplicationById = async (id: string): Promise<Application | null
 };
 
 export const createApplication = async (data: CreateApplicationDTO): Promise<Application> => {
-  const { company, role, status = 'APPLIED', dateApplied, notes } = data;
+  const { company, role, status = 'APPLIED', dateApplied, interviewDate, notes } = data;
   const result = await pool.query(
-    `INSERT INTO applications (company, role, status, "dateApplied", notes)
-     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-    [company, role, status, dateApplied, notes]
+    `INSERT INTO applications (company, role, status, "dateApplied", "interviewDate", notes)
+     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+    [company, role, status, dateApplied, interviewDate, notes]
   );
   
   const application = result.rows[0];
@@ -40,6 +40,8 @@ export const updateApplication = async (id: string, data: UpdateApplicationDTO):
     if (value !== undefined) {
       if (key === 'dateApplied') {
         fields.push(`"dateApplied" = $${index}`);
+      } else if (key === 'interviewDate') {
+        fields.push(`"interviewDate" = $${index}`);
       } else {
         fields.push(`${key} = $${index}`);
       }

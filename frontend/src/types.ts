@@ -14,6 +14,7 @@ export interface Application {
   role: string;
   status: ApplicationStatus;
   dateApplied: string;
+  interviewDate?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -24,6 +25,7 @@ export interface CreateApplicationDTO {
   role: string;
   status?: ApplicationStatus;
   dateApplied: string;
+  interviewDate?: string;
   notes?: string;
 }
 
@@ -32,5 +34,6 @@ export interface UpdateApplicationDTO {
   role?: string;
   status?: ApplicationStatus;
   dateApplied?: string;
+  interviewDate?: string;
   notes?: string;
 }

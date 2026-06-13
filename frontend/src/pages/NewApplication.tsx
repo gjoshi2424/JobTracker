@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { ArrowLeft } from 'lucide-react';
 import { createApplication } from '../services/api';
 import { ApplicationStatus, type CreateApplicationDTO } from '../types';
@@ -9,6 +9,7 @@ export default function NewApplication() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CreateApplicationDTO>({
     defaultValues: {
@@ -20,6 +21,8 @@ export default function NewApplication() {
     },
   });
 
+  const currentStatus = useWatch({ control, name: 'status' });
+
   const onSubmit = async (data: CreateApplicationDTO) => {
     try {
       // Ensure date is stored as ISO string if needed, 
@@ -29,6 +32,9 @@ export default function NewApplication() {
       const formattedData = {
         ...data,
         dateApplied: new Date(data.dateApplied).toISOString(),
+        ...(data.interviewDate && data.status === ApplicationStatus.INTERVIEW 
+          ? { interviewDate: new Date(data.interviewDate).toISOString() }
+          : { interviewDate: undefined })
       };
       await createApplication(formattedData);
       navigate('/');
@@ -113,6 +119,22 @@ export default function NewApplication() {
                 <p className="text-sm text-red-600">{errors.dateApplied.message}</p>
               )}
             </div>
+
+            {currentStatus === ApplicationStatus.INTERVIEW && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">Interview Date *</label>
+                <input
+                  type="datetime-local"
+                  {...register('interviewDate', { required: 'Interview date is required' })}
+                  className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow ${
+                    errors.interviewDate ? 'border-red-300 focus:ring-red-500' : 'border-slate-300'
+                  }`}
+                />
+                {errors.interviewDate && (
+                  <p className="text-sm text-red-600">{errors.interviewDate.message}</p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
