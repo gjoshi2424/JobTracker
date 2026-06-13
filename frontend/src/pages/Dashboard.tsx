@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Trash2 } from 'lucide-react';
-import { getApplications, createApplication, deleteApplication } from '../services/api';
-import { type Application, ApplicationStatus, type CreateApplicationDTO } from '../types';
+import { getApplications, deleteApplication } from '../services/api';
+import { type Application, ApplicationStatus } from '../types';
 
 const statusColors: Record<ApplicationStatus, string> = {
   [ApplicationStatus.APPLIED]: 'bg-blue-100 text-blue-800 border-blue-200',
@@ -15,11 +15,6 @@ const statusColors: Record<ApplicationStatus, string> = {
 export default function Dashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // New application form state
-  const [company, setCompany] = useState('');
-  const [role, setRole] = useState('');
 
   useEffect(() => {
     fetchApplications();
@@ -36,24 +31,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const newApp: CreateApplicationDTO = {
-        company,
-        role,
-        status: ApplicationStatus.APPLIED,
-        dateApplied: new Date().toISOString(),
-      };
-      await createApplication(newApp);
-      setCompany('');
-      setRole('');
-      setIsModalOpen(false);
-      fetchApplications();
-    } catch (error) {
-      console.error('Failed to create application', error);
-    }
-  };
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -92,13 +69,13 @@ export default function Dashboard() {
       {/* Header and Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-slate-900">Recent Applications</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
+        <Link
+          to="/applications/new"
           className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           <span>Add Application</span>
-        </button>
+        </Link>
       </div>
 
       {/* Table */}
@@ -159,55 +136,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Add Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900">Add Application</h2>
-            </div>
-            <form onSubmit={handleCreate} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Company</label>
-                <input
-                  type="text"
-                  required
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
-                  placeholder="e.g. Acme Corp"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
-                <input
-                  type="text"
-                  required
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
-                  placeholder="e.g. Software Engineer"
-                />
-              </div>
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm cursor-pointer"
-                >
-                  Save Application
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

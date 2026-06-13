@@ -1,10 +1,12 @@
-export enum ApplicationStatus {
-  APPLIED = 'APPLIED',
-  RECRUITER_SCREEN = 'RECRUITER_SCREEN',
-  INTERVIEW = 'INTERVIEW',
-  OFFER = 'OFFER',
-  REJECTED = 'REJECTED'
-}
+export const ApplicationStatus = {
+  APPLIED: 'APPLIED',
+  RECRUITER_SCREEN: 'RECRUITER_SCREEN',
+  INTERVIEW: 'INTERVIEW',
+  OFFER: 'OFFER',
+  REJECTED: 'REJECTED'
+} as const;
+
+export type ApplicationStatus = typeof ApplicationStatus[keyof typeof ApplicationStatus];
 
 export interface Application {
   id: string;

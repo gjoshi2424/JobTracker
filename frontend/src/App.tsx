@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Briefcase } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import ApplicationDetails from './pages/ApplicationDetails';
+import NewApplication from './pages/NewApplication';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/applications/new" element={<NewApplication />} />
             <Route path="/applications/:id" element={<ApplicationDetails />} />
           </Routes>
         </main>
