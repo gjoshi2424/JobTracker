@@ -38,6 +38,7 @@ export default function ApplicationDetails() {
     try {
       const updated = await updateApplication(id, { status, notes });
       setApplication(updated);
+      navigate('/');
     } catch (error) {
       console.error('Failed to update application', error);
     } finally {

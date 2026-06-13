@@ -1,5 +1,6 @@
 import { pool } from '../db';
 import { Application, CreateApplicationDTO, UpdateApplicationDTO } from '../models/Application';
+import { triggerWebhook } from './webhookService';
 
 export const getApplications = async (): Promise<Application[]> => {
   const result = await pool.query('SELECT * FROM applications ORDER BY "createdAt" DESC');
@@ -18,10 +19,19 @@ export const createApplication = async (data: CreateApplicationDTO): Promise<App
      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
     [company, role, status, dateApplied, notes]
   );
-  return result.rows[0];
+  
+  const application = result.rows[0];
+  
+  // Trigger Zapier Webhook
+  triggerWebhook('Application Created', application);
+  
+  return application;
 };
 
 export const updateApplication = async (id: string, data: UpdateApplicationDTO): Promise<Application | null> => {
+  const oldApp = await getApplicationById(id);
+  if (!oldApp) return null;
+
   const fields = [];
   const values = [];
   let index = 1;
@@ -38,7 +48,7 @@ export const updateApplication = async (id: string, data: UpdateApplicationDTO):
     }
   }
 
-  if (fields.length === 0) return getApplicationById(id);
+  if (fields.length === 0) return oldApp;
 
   fields.push(`"updatedAt" = CURRENT_TIMESTAMP`);
   
@@ -46,7 +56,13 @@ export const updateApplication = async (id: string, data: UpdateApplicationDTO):
   values.push(id);
 
   const result = await pool.query(query, values);
-  return result.rows[0] || null;
+  const updatedApp = result.rows[0] || null;
+
+  if (updatedApp && data.status && oldApp.status !== data.status) {
+    triggerWebhook('Status Updated', updatedApp);
+  }
+
+  return updatedApp;
 };
 
 export const deleteApplication = async (id: string): Promise<boolean> => {
