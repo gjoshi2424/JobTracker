@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Save, Trash2 } from 'lucide-react';
 import { getApplicationById, updateApplication, deleteApplication } from '../services/api';
 import { type Application, ApplicationStatus } from '../types';
+import { LoadingSpinner } from '../components';
 
 export default function ApplicationDetails() {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +60,7 @@ export default function ApplicationDetails() {
   };
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>;
+    return <LoadingSpinner />;
   }
 
   if (!application) {

@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Briefcase } from 'lucide-react';
-import Dashboard from './pages/Dashboard';
-import ApplicationDetails from './pages/ApplicationDetails';
-import NewApplication from './pages/NewApplication';
+import { Dashboard, ApplicationDetails, NewApplication } from './pages';
 
 function App() {
   return (

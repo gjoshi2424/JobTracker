@@ -3,14 +3,8 @@ import { Link } from 'react-router-dom';
 import { Plus, Trash2 } from 'lucide-react';
 import { getApplications, deleteApplication } from '../services/api';
 import { type Application, ApplicationStatus } from '../types';
+import { StatusBadge, LoadingSpinner } from '../components';
 
-const statusColors: Record<ApplicationStatus, string> = {
-  [ApplicationStatus.APPLIED]: 'bg-blue-100 text-blue-800 border-blue-200',
-  [ApplicationStatus.RECRUITER_SCREEN]: 'bg-purple-100 text-purple-800 border-purple-200',
-  [ApplicationStatus.INTERVIEW]: 'bg-amber-100 text-amber-800 border-amber-200',
-  [ApplicationStatus.OFFER]: 'bg-green-100 text-green-800 border-green-200',
-  [ApplicationStatus.REJECTED]: 'bg-red-100 text-red-800 border-red-200',
-};
 
 export default function Dashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -51,7 +45,7 @@ export default function Dashboard() {
   }, {} as Record<ApplicationStatus, number>);
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -109,9 +103,7 @@ export default function Dashboard() {
                     </td>
                     <td className="p-4">
                       <Link to={`/applications/${app.id}`} className="block">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[app.status]}`}>
-                          {app.status.replace('_', ' ')}
-                        </span>
+                        <StatusBadge status={app.status} />
                       </Link>
                     </td>
                     <td className="p-4 text-slate-500 text-sm">
