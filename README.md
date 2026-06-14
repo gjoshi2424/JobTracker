@@ -2,7 +2,8 @@
 
 A full-stack application for tracking job applications built with React, Vite, Tailwind CSS v4, Node.js, Express, TypeScript, and PostgreSQL.
 
-Note: Main purpose of this app is to test webhook integration with zapier.
+
+![alt text](<Screenshot 2026-06-14 at 1.22.17 AM.png>)
 
 ## Prerequisites
 
