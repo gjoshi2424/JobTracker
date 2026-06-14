@@ -14,7 +14,11 @@ interface StatusBadgeProps {
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[status]}`}>
+    <span
+      data-testid="status-badge"
+      data-status={status}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[status]}`}
+    >
       {status.replace('_', ' ')}
     </span>
   );
