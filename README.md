@@ -2,8 +2,7 @@
 
 A full-stack application for tracking job applications built with React, Vite, Tailwind CSS v4, Node.js, Express, TypeScript, and PostgreSQL.
 
-
-![alt text](<Screenshot 2026-06-14 at 1.22.17 AM.png>)
+![Alt text](/resources/sceenshot.png)
 
 ## Prerequisites
 
